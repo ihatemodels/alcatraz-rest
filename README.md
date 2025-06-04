@@ -13,7 +13,7 @@ The why you should hire me in a single repo :). I may consider selling the domai
 - **[About](#about)**
     - **[Structure](#structure)**
     - **[Requirements](#requirements)**
-    - **[Running Locally](#running-locally)**
+    - **[Running Locally](docs/running.md)**
 - **[CI](#ci)**
 - **[IaC](#iac)**
 
@@ -29,15 +29,15 @@ Implementation of an API that returns the hostname of the underlying node and a 
 
 ```shell
 ├── cmd # Entrypoints 
-│   ├── sender # Sender application
-│   └── server # Server application
-├── iac      # Infrastructure as Code implementation
+│   ├── sender # The Sender application
+│   └── server # The Server application
+├── iac # Infrastructure as Code implementation
 ├── internal # Internal sharable code
 │   ├── api
 │   │   └── v1 # API v1
-|   |   └── v2 # API v2
-│   ├── config
-│   └── observability
+|   |   └── v2 # API v2 for future use with backwards compatibility
+│   ├── config # Package for shared configuration
+│   └── observability # Package for shared observability
 ```
 
 #### **Requirements**
@@ -46,44 +46,20 @@ Go, GNU Make, Docker, Terraform, Git
 
 #### **Running Locally**
 
-First start the server:
-
-```shell
-make run-server
-##################
-{"time":"2025-06-04T07:46:20.198708793Z","level":"INFO","msg":"starting...","application":"alcatraz-rest","version":"local"}
-```
-
-Then run the sender:
-
-```shell
-make run-sender
-##################
-=== Load Balancer Test Results ===
-Total Requests: 100
-Successful Requests: 100
-Failed Requests: 0
-Available Nodes: 1
-Average Response Time: 0 ms
-
-=== Node Hostnames ===
-1. dev
-
-=== Requests Per Node ===
-dev                 :  100 requests (100.0%)
-
-=== Response Time Statistics (ms) ===
-dev                 : avg=  0ms, min=  0ms, max=  1ms, count=100
-```
+See [Running Locally](docs/running.md) for more details.
 
 ### CI
 
+![CI](docs/assets/ci.png)
+
 We have a complete CI  that: 
 
-- runs tests, linters on every PR to main and every push to main.
-- scans the code for vulnerabilities using GitHub CodeQL.
-- scans the entire git history for secrets leaks on every commit.
-- builds the applications and produces containers and binary builds on every tag.
+- runs tests and lints via [GoLint](https://github.com/golangci/golangci-lint) on every PR against the main and every push to the main branch.
+- scans the code for vulnerabilities using [GitHub CodeQL](https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/about-code-scanning).
+- scans the entire git history for secrets leaks via [Gitleaks](https://github.com/gitleaks/gitleaks) on every commit.
+- builds the applications and produces containers and binary builds with [GoReleaser](https://goreleaser.com/) on every tag.
 
 
 ### IaC
+
+We use [Terraform](https://www.terraform.io/) to manage our infrastructure as per the requirements.
