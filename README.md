@@ -50,7 +50,7 @@ See [Running Locally](docs/running.md) for more details.
 
 ### CI
 
-![CI](docs/assets/ci.png)
+![CI](docs/assets/release.png)
 
 We have a complete CI  that: 
 
