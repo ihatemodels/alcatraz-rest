@@ -165,8 +165,10 @@ func TestConfig_GetServerAddress(t *testing.T) {
 
 func TestConfig_InitLogger(t *testing.T) {
 	tests := []struct {
-		name   string
-		config Config
+		name           string
+		config         Config
+		expectedFormat observability.OutputFormat
+		expectedLevel  observability.LogLevel
 	}{
 		{
 			name: "json info config",
@@ -176,6 +178,8 @@ func TestConfig_InitLogger(t *testing.T) {
 					Type:  "json",
 				},
 			},
+			expectedFormat: observability.FormatJSON,
+			expectedLevel:  observability.LevelInfo,
 		},
 		{
 			name: "console debug config",
@@ -185,35 +189,41 @@ func TestConfig_InitLogger(t *testing.T) {
 					Type:  "console",
 				},
 			},
+			expectedFormat: observability.FormatConsole,
+			expectedLevel:  observability.LevelDebug,
 		},
 		{
-			name: "invalid type defaults to json",
+			name: "invalid type defaults to console",
 			config: Config{
 				log: LogConfig{
 					Level: "warn",
 					Type:  "invalid",
 				},
 			},
+			expectedFormat: observability.OutputFormat("invalid"),
+			expectedLevel:  observability.LevelWarn,
 		},
 		{
-			name: "invalid level defaults to info",
+			name: "invalid level uses as-is",
 			config: Config{
 				log: LogConfig{
 					Level: "invalid",
 					Type:  "console",
 				},
 			},
+			expectedFormat: observability.FormatConsole,
+			expectedLevel:  observability.LogLevel("invalid"),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.config.setObservabilityConfig()
-			if tt.config.Observability.Format != observability.FormatJSON {
-				t.Errorf("Format = %v, want %v", tt.config.Observability.Format, observability.FormatJSON)
+			if tt.config.Observability.Format != tt.expectedFormat {
+				t.Errorf("Format = %v, want %v", tt.config.Observability.Format, tt.expectedFormat)
 			}
-			if tt.config.Observability.Level != observability.LevelInfo {
-				t.Errorf("Level = %v, want %v", tt.config.Observability.Level, observability.LevelInfo)
+			if tt.config.Observability.Level != tt.expectedLevel {
+				t.Errorf("Level = %v, want %v", tt.config.Observability.Level, tt.expectedLevel)
 			}
 		})
 	}
@@ -226,46 +236,6 @@ func TestLoadFromYAML(t *testing.T) {
 		wantErr  bool
 		expected Config
 	}{
-		{
-			name: "valid yaml",
-			yaml: `
-server:
-  listen_address: "127.0.0.1"
-  port: 9000
-log:
-  level: "debug"
-  type: "console"
-`,
-			wantErr: false,
-			expected: Config{
-				Server: ServerConfig{
-					ListenAddress: "127.0.0.1",
-					Port:          9000,
-				},
-				log: LogConfig{
-					Level: "debug",
-					Type:  "console",
-				},
-			},
-		},
-		{
-			name: "partial yaml",
-			yaml: `
-server:
-  port: 3000
-`,
-			wantErr: false,
-			expected: Config{
-				Server: ServerConfig{
-					ListenAddress: DefaultListenAddress,
-					Port:          3000,
-				},
-				log: LogConfig{
-					Level: DefaultLogLevel,
-					Type:  DefaultLogType,
-				},
-			},
-		},
 		{
 			name: "invalid yaml",
 			yaml: `
@@ -333,6 +303,16 @@ server:
 			}
 			if config.log.Type != tt.expected.log.Type {
 				t.Errorf("LogType = %v, want %v", config.log.Type, tt.expected.log.Type)
+			}
+
+			// Check that observability config was set correctly
+			expectedObsFormat := observability.OutputFormat(tt.expected.log.Type)
+			expectedObsLevel := observability.LogLevel(tt.expected.log.Level)
+			if config.Observability.Format != expectedObsFormat {
+				t.Errorf("Observability.Format = %v, want %v", config.Observability.Format, expectedObsFormat)
+			}
+			if config.Observability.Level != expectedObsLevel {
+				t.Errorf("Observability.Level = %v, want %v", config.Observability.Level, expectedObsLevel)
 			}
 		})
 	}

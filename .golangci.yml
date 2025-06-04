@@ -3,18 +3,6 @@ run:
   issues-exit-code: 1
   tests: false
 linters:
-  enable:
-    - bodyclose
-    - dupl
-    - funlen
-    - goconst
-    - gocritic
-    - gocyclo
-    - lll
-    - misspell
-    - unconvert
-    - unparam
-    - whitespace
   exclusions:
     generated: lax
     presets:

@@ -14,7 +14,6 @@ The why you should hire me in a single repo :). I may consider selling the domai
     - **[Structure](#structure)**
     - **[Requirements](#requirements)**
     - **[Running Locally](#running-locally)**
-- **[Build](#build)**
 - **[CI](#ci)**
 - **[IaC](#iac)**
 
@@ -77,9 +76,14 @@ dev                 :  100 requests (100.0%)
 dev                 : avg=  0ms, min=  0ms, max=  1ms, count=100
 ```
 
-
-### Build
-
 ### CI
+
+We have a complete CI  that: 
+
+- runs tests, linters on every PR to main and every push to main.
+- scans the code for vulnerabilities using GitHub CodeQL.
+- scans the entire git history for secrets leaks on every commit.
+- builds the applications and produces containers and binary builds on every tag.
+
 
 ### IaC

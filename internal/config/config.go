@@ -78,6 +78,9 @@ func LoadConfig() (*Config, error) {
 	// Override with command line flags if provided
 	applyFlags(config, listenAddress, port, logLevel, logType)
 
+	// Set observability configuration from log config
+	config.setObservabilityConfig()
+
 	// Validate configuration
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid configuration: %w", err)

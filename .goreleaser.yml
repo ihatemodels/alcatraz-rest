@@ -1,9 +1,37 @@
+version: 2
+
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - env:
+  - id: "alcatraz-rest-server"
+    binary: "alcatraz-rest-server"
+    main: ./cmd/server
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+      - openbsd
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    tags:
+      - osusergo
+      - netgo
+    ldflags:
+      - -s -w
+      - -X main.version=${TAG}
+  - id: "alcatraz-rest-sender"
+    binary: "alcatraz-rest-sender"
+    main: ./cmd/sender
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -25,7 +53,33 @@ builds:
       - -X main.version=${TAG}
 
 archives:
-  - format: tar.gz
+  - id: "server"
+    builds: ["alcatraz-rest-server"]
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}-server_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+  - id: "sender"
+    builds: ["alcatraz-rest-sender"]
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}-sender_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+  - id: "combined"
+    builds: ["alcatraz-rest-server", "alcatraz-rest-sender"]
+    format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
