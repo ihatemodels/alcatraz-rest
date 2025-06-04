@@ -37,9 +37,9 @@ Your Bonus Points:
 My Bonus Points:
 
 - [X] Mutual TLS between the Load Balancer and the Application Nodes
-- [x] Extended CI for how a Public Repository should be developed and automated ( from my experience)
+- [x] Extended CI for how such a Go service should be developed and automated ( from my experience)
 - [x] The full suite of Security checks and preventions in the Software Development Lifecycle (SDLC)
-
+- [x] PR, Issues templates and GitFlow with a proper release process and branch protection rules
 
 #### **Architecture**
 
@@ -108,8 +108,6 @@ We have a complete CI pipeline that:
 - performs comprehensive vulnerability scanning with [Trivy](https://github.com/aquasecurity/trivy) on both repository and container images.
 - builds the applications and produces multi-arch [Containers](https://github.com/ihatemodels/alcatraz-rest/pkgs/container/alcatraz-rest) on every tag.
 - builds the applications and produces multi-arch and multi-os binary builds with [GoReleaser](https://goreleaser.com/) on every tag.
-
-
 
 ### IaC
 
