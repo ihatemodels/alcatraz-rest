@@ -1,4 +1,4 @@
-module github.com/ihatemodels/alcatraz-live
+module github.com/ihatemodels/alcatraz-rest
 
 go 1.24.1
 

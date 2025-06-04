@@ -1,8 +1,8 @@
-BINARY_NAME_SERVER=alcatraz-live
+BINARY_NAME_SERVER=alcatraz-rest
 MAIN_PATH_SERVER=./cmd/server/main.go
 CONFIG_FILE=config.yaml
 BUILD_DIR=build
-BINARY_NAME_SENDER=alcatraz-live-sender
+BINARY_NAME_SENDER=alcatraz-rest-sender
 MAIN_PATH_SENDER=./cmd/sender/main.go
 
 

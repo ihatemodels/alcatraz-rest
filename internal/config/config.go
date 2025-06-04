@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ihatemodels/alcatraz-live/internal/observability"
+	"github.com/ihatemodels/alcatraz-rest/internal/observability"
 	"gopkg.in/yaml.v3"
 )
 

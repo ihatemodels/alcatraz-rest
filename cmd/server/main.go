@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	api "github.com/ihatemodels/alcatraz-live/internal/api/v1"
-	"github.com/ihatemodels/alcatraz-live/internal/config"
-	"github.com/ihatemodels/alcatraz-live/internal/observability"
+	api "github.com/ihatemodels/alcatraz-rest/internal/api/v1"
+	"github.com/ihatemodels/alcatraz-rest/internal/config"
+	"github.com/ihatemodels/alcatraz-rest/internal/observability"
 )
 
 var version string
@@ -24,7 +24,7 @@ func main() {
 
 	logger := observability.InitLogger(cfg.Observability)
 
-	logger.Info("starting...", "application", "alcatraz-live", "version", version)
+	logger.Info("starting...", "application", "alcatraz-rest", "version", version)
 
 	srv := &http.Server{
 		Addr:    cfg.GetServerAddress(),

@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ihatemodels/alcatraz-live/internal/observability"
+	"github.com/ihatemodels/alcatraz-rest/internal/observability"
 )
 
 func TestConfig_Validate(t *testing.T) {
