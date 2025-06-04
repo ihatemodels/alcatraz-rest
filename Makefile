@@ -4,7 +4,7 @@ CONFIG_FILE=config.yaml
 BUILD_DIR=build
 BINARY_NAME_SENDER=alcatraz-rest-sender
 MAIN_PATH_SENDER=./cmd/sender/main.go
-
+VERSION=local
 
 GOCMD=go
 GOBUILD=$(GOCMD) build
@@ -18,18 +18,18 @@ GOMOD=$(GOCMD) mod
 build-server:  ## Build the application
 	@echo "Building $(BINARY_NAME_SERVER)..."
 	@mkdir -p $(BUILD_DIR)
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME_SERVER) $(MAIN_PATH_SERVER)
+	$(GOBUILD) -tags osusergo,netgo -ldflags "-s -w -X main.version=${VERSION}" -o $(BUILD_DIR)/$(BINARY_NAME_SERVER) $(MAIN_PATH_SERVER)
 	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME_SERVER)"
 
 .PHONY: build-sender
 build-sender:  ## Build the application
 	@echo "Building $(BINARY_NAME_SENDER)..."
 	@mkdir -p $(BUILD_DIR)
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME_SENDER) $(MAIN_PATH_SENDER)
+	$(GOBUILD) -tags osusergo,netgo -ldflags "-s -w -X main.version=${VERSION}" -o $(BUILD_DIR)/$(BINARY_NAME_SENDER) $(MAIN_PATH_SENDER)
 	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME_SENDER)"
 
 .PHONY: run-server
-run-server: build-server  ## Run the application
+run-server: build-server 
 	@echo "Running $(BINARY_NAME_SERVER)..."
 	./$(BUILD_DIR)/$(BINARY_NAME_SERVER) \
 		-listen-address=127.0.0.1 \
@@ -38,9 +38,13 @@ run-server: build-server  ## Run the application
 		-log-type=console
 
 .PHONY: run-sender
-run-sender: build-sender  ## Run the application
+run-sender: build-sender 
 	@echo "Running $(BINARY_NAME_SENDER)..."
-	./$(BUILD_DIR)/$(BINARY_NAME_SENDER)
+	./$(BUILD_DIR)/$(BINARY_NAME_SENDER) \
+		-url http://127.0.0.1:9000 \
+		-requests 100 \
+		-concurrency 10 \
+		-timeout 10s
 
 .PHONY: lint
 lint:  ## Run golangci-lint

@@ -6,7 +6,7 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG Version
 
-WORKDIR /go/src/github.com/ihatemodels/alcatraz-live
+WORKDIR /go/src/github.com/ihatemodels/alcatraz-rest
 COPY . .
 
 RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 \
@@ -14,16 +14,16 @@ RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 \
   go build \
   -tags osusergo,netgo \
   -ldflags "-s -w -X main.version=${Version}" \
-  -o /usr/bin/alcatraz-live .
+  -o /usr/bin/alcatraz-rest .
 
 FROM --platform=${BUILDPLATFORM:-linux/amd64} gcr.io/distroless/static-debian12:latest
 
-LABEL org.opencontainers.image.source=https://github.com/ihatemodels/alcatraz-live
+LABEL org.opencontainers.image.source=https://github.com/ihatemodels/alcatraz-rest
 LABEL org.opencontainers.image.version=${Version}
 LABEL org.opencontainers.image.authors="admins@ihatemodels.com"
-LABEL org.opencontainers.image.title="Alcatraz Live"
-LABEL org.opencontainers.image.description="Alcatraz Live"
+LABEL org.opencontainers.image.title="Alcatraz rest"
+LABEL org.opencontainers.image.description="Alcatraz rest"
 
-COPY --from=build /usr/bin/alcatraz-live /
+COPY --from=build /usr/bin/alcatraz-rest /
 EXPOSE 8080
-ENTRYPOINT ["/alcatraz-live"]
+ENTRYPOINT ["/alcatraz-rest"]
