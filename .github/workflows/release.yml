@@ -10,8 +10,48 @@ permissions:
   packages: write
 
 jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: "go"
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run tests
+        run: go test -v ./...
+
+  lint:
+    name: Linters
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: "go"
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: "Run Linters"
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: latest
+          args: --verbose
+
   goreleaser:
-    needs: [tests, lint]
+    needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

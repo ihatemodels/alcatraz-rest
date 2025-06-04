@@ -11,9 +11,12 @@ The why you should hire me in a single repo :). I may consider selling the domai
 ## Table of Contents
 
 - **[About](#about)**
+    - **[Structure](#structure)**
+    - **[Requirements](#requirements)**
+    - **[Running Locally](#running-locally)**
 - **[Build](#build)**
 - **[CI](#ci)**
-- **[IaC](#release)**
+- **[IaC](#iac)**
 
 ### About 
 
@@ -23,7 +26,7 @@ Implementation of an API that returns the hostname of the underlying node and a 
 - Counts the number of requests handled by each node
 - Counts the number of available nodes
 
-- **Structure**
+#### **Structure**
 
 ```shell
 ├── cmd # Entrypoints 
@@ -38,27 +41,17 @@ Implementation of an API that returns the hostname of the underlying node and a 
 │   └── observability
 ```
 
-- **Requirements**
+#### **Requirements**
 
 Go, GNU Make, Docker, Terraform, Git
 
-- **Running Locally**
+#### **Running Locally**
 
 First start the server:
 
 ```shell
 make run-server
-
-building alcatraz-rest...
-go build -tags osusergo,netgo -ldflags "-s -w -X main.version=local" -o build/alcatraz-rest ./cmd/server/main.go
-Build complete: build/alcatraz-rest
-Running alcatraz-rest...
-./build/alcatraz-rest \
-        -listen-address=127.0.0.1 \
-        -port=9000 \
-        -log-level=debug \
-        -log-type=console
-
+##################
 {"time":"2025-06-04T07:46:20.198708793Z","level":"INFO","msg":"starting...","application":"alcatraz-rest","version":"local"}
 ```
 
@@ -66,17 +59,7 @@ Then run the sender:
 
 ```shell
 make run-sender
-
-Building alcatraz-rest-sender...
-go build -tags osusergo,netgo -ldflags "-s -w -X main.version=local" -o build/alcatraz-rest-sender ./cmd/sender/main.go
-Build complete: build/alcatraz-rest-sender
-Running alcatraz-rest-sender...
-./build/alcatraz-rest-sender \
-        -url http://127.0.0.1:9000 \
-        -requests 100 \
-        -concurrency 10 \
-        -timeout 10s
-
+##################
 === Load Balancer Test Results ===
 Total Requests: 100
 Successful Requests: 100
