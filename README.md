@@ -4,7 +4,7 @@
 
 [https://alcatraz.rest/api/ping](https://alcatraz.rest/api/ping)
 
-`The why you should hire me in a single repo. I may consider selling the domain if hired. :stuck_out_tongue_winking_eye:`
+`The why you should hire me in a single repo. I may consider selling the domain if hired.` :stuck_out_tongue_winking_eye:
 
 
 ![GitHub License](https://img.shields.io/github/license/ihatemodels/alcatraz-rest)
