@@ -1,8 +1,11 @@
 # Alcatraz rest
 
-https://alcatraz.rest/api/ping
+![Alcatraz Rest](docs/assets/logo.svg)
 
-`**The why you should hire me in a single repo :). I may consider selling the domain if hired.**`
+[https://alcatraz.rest/api/ping](https://alcatraz.rest/api/ping)
+
+`The why you should hire me in a single repo. I may consider selling the domain if hired. :stuck_out_tongue_winking_eye:`
+
 
 ![GitHub License](https://img.shields.io/github/license/ihatemodels/alcatraz-rest)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ihatemodels/alcatraz-rest/ci.yml)
