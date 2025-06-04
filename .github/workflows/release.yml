@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   set-version:
+    name: Set tag version
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.get_tag.outputs.tag }}
@@ -31,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    name: Tests
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -49,7 +50,7 @@ jobs:
         run: go test -v ./...
 
   lint:
-    name: Linters
+    name: Run GoLint
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +80,10 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Set the version for Docker
+        id: set_docker_tag
+        run: echo TAG=${{ steps.get_tag.outputs.tag }} >> $GITHUB_ENV
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
@@ -86,7 +91,7 @@ jobs:
           images: |
             ghcr.io/ihatemodels/alcatraz-rest
           tags: |
-            type=semver,pattern={{steps.get_tag.outputs.tag}}
+            type=semver,pattern={{version}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -107,13 +112,14 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm/v6,linux/arm64
           build-args: |
-            VERSION=${{ steps.get_tag.outputs.tag }}
+            VERSION=${{ env.TAG }}
           context: .
           push: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') }}
-          tags: ${{ steps.get_tag.outputs.tag }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   goreleaser:
+    name: Release Binaries
     needs: [set-version, test, lint, scan-secrets]
     runs-on: ubuntu-latest
     steps:
@@ -123,7 +129,7 @@ jobs:
           fetch-depth: 1
 
       - name: Set the version for GoReleaser
-        id: get_tag
+        id: set_goreleaser_tag
         run: echo TAG=${{ steps.get_tag.outputs.tag }} >> $GITHUB_ENV
 
       - name: Set up Go
