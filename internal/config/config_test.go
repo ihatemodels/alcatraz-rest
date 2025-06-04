@@ -20,6 +20,9 @@ func TestConfig_Validate(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "0.0.0.0",
 					Port:          8080,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: "info",
@@ -29,11 +32,94 @@ func TestConfig_Validate(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "valid config with TLS",
+			config: Config{
+				Server: ServerConfig{
+					ListenAddress: "0.0.0.0",
+					Port:          8080,
+					TLS: TLSConfig{
+						Enabled:           true,
+						CertFile:          "/path/to/cert.pem",
+						KeyFile:           "/path/to/key.pem",
+						ClientCAFile:      "/path/to/ca.pem",
+						RequireClientCert: true,
+					},
+				},
+				log: LogConfig{
+					Level: "info",
+					Type:  "json",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid TLS config - missing cert file",
+			config: Config{
+				Server: ServerConfig{
+					ListenAddress: "0.0.0.0",
+					Port:          8080,
+					TLS: TLSConfig{
+						Enabled: true,
+						KeyFile: "/path/to/key.pem",
+					},
+				},
+				log: LogConfig{
+					Level: "info",
+					Type:  "json",
+				},
+			},
+			wantErr: true,
+			errMsg:  "TLS cert file cannot be empty",
+		},
+		{
+			name: "invalid TLS config - missing key file",
+			config: Config{
+				Server: ServerConfig{
+					ListenAddress: "0.0.0.0",
+					Port:          8080,
+					TLS: TLSConfig{
+						Enabled:  true,
+						CertFile: "/path/to/cert.pem",
+					},
+				},
+				log: LogConfig{
+					Level: "info",
+					Type:  "json",
+				},
+			},
+			wantErr: true,
+			errMsg:  "TLS key file cannot be empty",
+		},
+		{
+			name: "invalid TLS config - missing CA file when requiring client certs",
+			config: Config{
+				Server: ServerConfig{
+					ListenAddress: "0.0.0.0",
+					Port:          8080,
+					TLS: TLSConfig{
+						Enabled:           true,
+						CertFile:          "/path/to/cert.pem",
+						KeyFile:           "/path/to/key.pem",
+						RequireClientCert: true,
+					},
+				},
+				log: LogConfig{
+					Level: "info",
+					Type:  "json",
+				},
+			},
+			wantErr: true,
+			errMsg:  "client CA file must be specified",
+		},
+		{
 			name: "invalid log level",
 			config: Config{
 				Server: ServerConfig{
 					ListenAddress: "0.0.0.0",
 					Port:          8080,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: "invalid",
@@ -64,6 +150,9 @@ func TestConfig_Validate(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "0.0.0.0",
 					Port:          0,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: "info",
@@ -79,6 +168,9 @@ func TestConfig_Validate(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "0.0.0.0",
 					Port:          70000,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: "info",
@@ -94,6 +186,9 @@ func TestConfig_Validate(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "",
 					Port:          8080,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: "info",
@@ -137,6 +232,9 @@ func TestConfig_GetServerAddress(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "0.0.0.0",
 					Port:          8080,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 			},
 			want: "0.0.0.0:8080",
@@ -147,6 +245,9 @@ func TestConfig_GetServerAddress(t *testing.T) {
 				Server: ServerConfig{
 					ListenAddress: "127.0.0.1",
 					Port:          3000,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 			},
 			want: "127.0.0.1:3000",
@@ -269,6 +370,9 @@ server:
 				Server: ServerConfig{
 					ListenAddress: DefaultListenAddress,
 					Port:          DefaultPort,
+					TLS: TLSConfig{
+						Enabled: false,
+					},
 				},
 				log: LogConfig{
 					Level: DefaultLogLevel,
@@ -323,6 +427,9 @@ func TestLoadFromYAML_NonExistentFile(t *testing.T) {
 		Server: ServerConfig{
 			ListenAddress: DefaultListenAddress,
 			Port:          DefaultPort,
+			TLS: TLSConfig{
+				Enabled: false,
+			},
 		},
 		log: LogConfig{
 			Level: DefaultLogLevel,
@@ -350,6 +457,9 @@ func TestApplyFlags(t *testing.T) {
 		Server: ServerConfig{
 			ListenAddress: DefaultListenAddress,
 			Port:          DefaultPort,
+			TLS: TLSConfig{
+				Enabled: false,
+			},
 		},
 		log: LogConfig{
 			Level: DefaultLogLevel,
@@ -384,6 +494,9 @@ func TestApplyFlags_EmptyValues(t *testing.T) {
 		Server: ServerConfig{
 			ListenAddress: DefaultListenAddress,
 			Port:          DefaultPort,
+			TLS: TLSConfig{
+				Enabled: false,
+			},
 		},
 		log: LogConfig{
 			Level: DefaultLogLevel,

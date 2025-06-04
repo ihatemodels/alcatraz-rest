@@ -118,9 +118,54 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  trivy-scan:
+    name: Security Scan with Trivy
+    needs: [set-version, build-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Trivy vulnerability scanner on repository
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-repo-results.sarif'
+
+      - name: Upload Trivy repository scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-repo-results.sarif'
+
+      - name: Run Trivy vulnerability scanner on Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/ihatemodels/alcatraz-rest:${{ needs.set-version.outputs.tag }}'
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+
+      - name: Upload Trivy image scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+
+      - name: Run Trivy vulnerability scanner with table output
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/ihatemodels/alcatraz-rest:${{ needs.set-version.outputs.tag }}'
+          format: 'table'
+        env:
+          TRIVY_EXIT_CODE: '1'  # Fail the build if HIGH or CRITICAL vulnerabilities are found
+
   goreleaser:
     name: Release Binaries
-    needs: [set-version, test, lint, scan-secrets]
+    needs: [set-version, test, lint, scan-secrets, trivy-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

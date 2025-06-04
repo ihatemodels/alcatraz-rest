@@ -21,8 +21,18 @@ type Config struct {
 
 // ServerConfig holds server-related configuration
 type ServerConfig struct {
-	ListenAddress string `yaml:"listen_address"`
-	Port          int    `yaml:"port"`
+	ListenAddress string    `yaml:"listen_address"`
+	Port          int       `yaml:"port"`
+	TLS           TLSConfig `yaml:"tls"`
+}
+
+// TLSConfig holds TLS-related configuration
+type TLSConfig struct {
+	Enabled           bool   `yaml:"enabled"`
+	CertFile          string `yaml:"cert_file"`
+	KeyFile           string `yaml:"key_file"`
+	ClientCAFile      string `yaml:"client_ca_file"`
+	RequireClientCert bool   `yaml:"require_client_cert"`
 }
 
 // LogConfig holds logging-related configuration
@@ -159,6 +169,19 @@ func (c *Config) Validate() error {
 	// Validate listen address (basic check)
 	if c.Server.ListenAddress == "" {
 		return fmt.Errorf("listen address cannot be empty")
+	}
+
+	// Validate TLS configuration if enabled
+	if c.Server.TLS.Enabled {
+		if c.Server.TLS.CertFile == "" {
+			return fmt.Errorf("TLS cert file cannot be empty when TLS is enabled")
+		}
+		if c.Server.TLS.KeyFile == "" {
+			return fmt.Errorf("TLS key file cannot be empty when TLS is enabled")
+		}
+		if c.Server.TLS.RequireClientCert && c.Server.TLS.ClientCAFile == "" {
+			return fmt.Errorf("client CA file must be specified when requiring client certificates")
+		}
 	}
 
 	return nil
