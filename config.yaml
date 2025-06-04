@@ -1,6 +1,12 @@
 server:
   listen_address: "0.0.0.0"
   port: 8080
+  tls:
+    enabled: false
+    cert_file: "certs/server.crt"
+    key_file: "certs/server.key"
+    client_ca_file: "certs/ca.crt"
+    require_client_cert: true
 log:
   level: "info"
-  type: "json" 
+  type: "json"
