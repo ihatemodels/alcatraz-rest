@@ -2,7 +2,7 @@
 
 https://alcatraz.rest/api/ping
 
-The why you should hire me in a single repo :). I may consider selling the domain if hired.
+`**The why you should hire me in a single repo :). I may consider selling the domain if hired.**`
 
 ![GitHub License](https://img.shields.io/github/license/ihatemodels/alcatraz-rest)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ihatemodels/alcatraz-rest/ci.yml)
@@ -35,7 +35,7 @@ Implementation of an API that returns the hostname of the underlying node and a 
 ├── internal # Internal sharable code
 │   ├── api
 │   │   └── v1 # API v1
-|   |   └── v2 # API v2 for future use with backwards compatibility
+|   |   └── v2 # API v2 for future use with backwards compatibility imports
 │   ├── config # Package for shared configuration
 │   └── observability # Package for shared observability
 ```
@@ -52,12 +52,14 @@ See [Running Locally](docs/running.md) for more details.
 
 ![CI](docs/assets/release.png)
 
-We have a complete CI  that: 
+We have a complete CI pipeline that: 
 
 - runs tests and lints via [GoLint](https://github.com/golangci/golangci-lint) on every PR against the main and every push to the main branch.
 - scans the code for vulnerabilities using [GitHub CodeQL](https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/about-code-scanning).
 - scans the entire git history for secrets leaks via [Gitleaks](https://github.com/gitleaks/gitleaks) on every commit.
-- builds the applications and produces containers and binary builds with [GoReleaser](https://goreleaser.com/) on every tag.
+- builds the applications and produces multi-arch [Containers](https://github.com/ihatemodels/alcatraz-rest/pkgs/container/alcatraz-rest) on every tag.
+- builds the applications and produces multi-arch and multi-os binary builds with [GoReleaser](https://goreleaser.com/) on every tag.
+
 
 
 ### IaC
