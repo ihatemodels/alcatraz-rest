@@ -55,6 +55,10 @@ https://alcatraz.rest
           ▼                      ▼
 ┌─────────────────────────────────────────┐
 │       Caddy Load Balancer               │
+│                                         │
+│       Docker Network                    │
+│       (alcatraz-network)                │
+│                                         │
 │       (caddy:alpine)                    │ 
 │   Ports: 80 (HTTP→HTTPS), 443 (HTTPS)   │
 └─────────────┬───────────────────────────┘
